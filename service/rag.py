@@ -23,6 +23,7 @@ class RagPipeline:
         rerank_top_k: int = 5,
         rerank_feed_top_k: int = 8,
         rerank_enabled: bool = True,
+        retrieval_top_k: int = 20,
     ):
         self.retriever = retriever
         self.reranker = reranker
@@ -34,6 +35,7 @@ class RagPipeline:
         self.rerank_top_k = rerank_top_k
         self.rerank_feed_top_k = rerank_feed_top_k
         self.rerank_enabled = rerank_enabled
+        self.retrieval_top_k = retrieval_top_k
 
     async def answer_stream(
         self, session_id: str, query: str
@@ -52,7 +54,7 @@ class RagPipeline:
         # 多路检索：对每个改写语句检索并合并
         all_cands: Dict[str, dict] = {}
         for q in rewritten:
-            for c in self.retriever.retrieve(q, top_k=20):
+            for c in self.retriever.retrieve(q, top_k=self.retrieval_top_k):
                 all_cands.setdefault(c["chunk_id"], c)
         candidates = list(all_cands.values())
         # 按融合前分数降序，限制进入 Rerank 的候选数（缓解 Cross-Encoder CPU 开销）

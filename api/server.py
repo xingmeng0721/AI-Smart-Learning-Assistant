@@ -61,6 +61,7 @@ def build_pipeline():
         rerank_top_k=settings.rerank_top_k,
         rerank_feed_top_k=settings.rerank_feed_top_k,
         rerank_enabled=settings.rerank_enabled,
+        retrieval_top_k=settings.retrieval_top_k,
     )
 
 

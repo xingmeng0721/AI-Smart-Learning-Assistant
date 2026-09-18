@@ -3,7 +3,6 @@
 基于 RAG（Retrieval-Augmented Generation）架构的智能学习助教，覆盖**文档解析 → 结构化分块 → 向量化 → 混合检索 → 重排 → 生成 + 引用溯源**完整链路，支持多轮对话与知识库增量更新。
 
 > 仓库：https://github.com/xingmeng0721/AI-Smart-Learning-Assistant
-> 提示：可以使用 Ctrl+F 快速查找自己想要的章节。
 
 ## 功能特性
 
@@ -115,26 +114,16 @@ python scripts/e2e_check.py   # 端到端：问答 / 拒答 / 增量导入
 | Rerank | `BgeReranker`（BAAI/bge-reranker-v2-m3，本地 HF 模型） | `OverlapReranker`（字符重叠） |
 | LLM | `OllamaLLM`（qwen2.5:7b） | `MockLLM`（规则回复） |
 
-### 安装与模型（模型目录可用环境变量指定到任意盘符）
+### 安装与模型
+
+> 模型目录可用环境变量 `OLLAMA_MODELS` 指定到空间充足的盘（避免占满系统盘）。
 
 ```bash
-# 1. 安装 Ollama（winget 或官网安装包）
-winget install --id Ollama.Ollama -e
-
-# 2. 【建议】模型目录放到空间充足的盘（避免占满系统盘 C:）
-#    在"用户环境变量"新建 OLLAMA_MODELS=D:\ollama\models   # 换成你的目录
-#    重启 Ollama
-
-# 3. 拉取模型（LLM 与 Embedding）
-ollama pull qwen2.5:7b     # LLM（约 4.7GB）
-ollama pull bge-m3         # Embedding（约 1.2GB）
-
-# 4. 启动 / 验证
+winget install --id Ollama.Ollama -e    # 安装
+ollama pull qwen2.5:7b                  # LLM（约 4.7GB）
+ollama pull bge-m3                      # Embedding（约 1.2GB）
 ollama serve
-curl http://localhost:11434/api/tags   # 应看到上述模型
-
-# 5. 拒答阈值（真实 Embedding 下默认 0.35，可按需调整）
-set CONFIDENCE_THRESHOLD=0.35
+curl http://localhost:11434/api/tags    # 验证模型已就绪
 ```
 
 ### Rerank 模型（BAAI/bge-reranker-v2-m3）
@@ -152,7 +141,6 @@ python -c "from huggingface_hub import snapshot_download; snapshot_download('BAA
 ```
 
 - 模型权重就绪后 `service/components.py` 会自动选中 `BgeReranker`（`/health` 的 `reranker` 上报该类型），否则依次回退 `OllamaReranker` → `OverlapReranker`。
-- 分数经 sigmoid 归一化为 (0,1)：真实 reranker 上「注意力机制」相关命中 0.97，无关 ~0.001，区分度显著。
 - 自定义目录：设置环境变量 `BGE_RERANKER_MODEL`（默认 `models/bge-reranker-v2-m3`）；`models/` 已加入 `.gitignore`，不会入库。
 
 ## 项目结构
