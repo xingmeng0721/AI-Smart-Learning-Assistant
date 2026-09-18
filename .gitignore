@@ -1,0 +1,42 @@
+# 项目根目录
+d:\aistudy\airag
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 向量库与模型缓存
+.chroma/
+.ollama/
+models/
+
+# 会话持久化
+.sessions/
+
+# 环境
+.venv/
+venv/
+
+# IDE / 本地配置
+.vscode/
+.idea/
+
+# 缓存
+.cache/
+.pytest_cache/
+
+# 前端
+web/node_modules/
+web/dist/
+
+# 测试（不入库）
+tests/
+
+# 日志与临时
+*.log
+*.tmp
+
+# 其他
+.ccache/
+*~
